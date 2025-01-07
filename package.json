@@ -1,0 +1,39 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "npm run development",
+        "development": "mix",
+        "watch": "mix watch",
+        "watch-poll": "mix watch -- --watch-options-poll=1000",
+        "hot": "mix watch --hot",
+        "prod": "npm run production",
+        "production": "mix --production"
+    },
+    "devDependencies": {
+        "@vue/compiler-sfc": "^3.2.36",
+        "cross-env": "^7.0.3",
+        "laravel-mix": "^6.0.44",
+        "object-to-formdata": "^1.5.2",
+        "resolve-url-loader": "5.0.0",
+        "sass": "^1.52.1",
+        "sass-loader": "13.0.0",
+        "vue-loader": "^17.0.0",
+        "vue-template-compiler": "^2.6.14"
+    },
+    "dependencies": {
+        "@babel/plugin-transform-runtime": "^7.18.2",
+        "@babel/runtime": "^7.18.3",
+        "@inertiajs/inertia": "^0.11.0",
+        "@vue/babel-plugin-jsx": "^1.1.1",
+        "axios": "^0.27.2",
+        "form-backend-validation": "^2.4.0",
+        "laravel-vapor": "^0.5.1",
+        "lodash": "^4.17.21",
+        "slug": "^0.9.1",
+        "vue": "^3.2.36",
+        "vue-advanced-cropper": "^2.8.1",
+        "vue-ray": "^1.17.3",
+        "vuedraggable": "^4.1.0",
+        "vuex": "^4.0.2"
+    }
+}

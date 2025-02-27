@@ -1,6 +1,6 @@
 <?php
 
-namespace Ebess\AdvancedNovaMediaLibrary\Fields;
+namespace Marshmallow\AdvancedNovaMediaLibrary\Fields;
 
 class Images extends Media
 {

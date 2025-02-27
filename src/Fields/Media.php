@@ -1,6 +1,6 @@
 <?php
 
-namespace Ebess\AdvancedNovaMediaLibrary\Fields;
+namespace Marshmallow\AdvancedNovaMediaLibrary\Fields;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
@@ -292,7 +292,7 @@ class Media extends Field
      * @param HasMedia|HasMediaTrait $resource
      * @param null $attribute
      */
-    public function resolve($resource, $attribute = null)
+    public function resolve($resource, ?string $attribute = null): void
     {
         $collectionName = $attribute ?? $this->attribute;
 

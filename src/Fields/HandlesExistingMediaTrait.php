@@ -1,6 +1,6 @@
 <?php
 
-namespace Ebess\AdvancedNovaMediaLibrary\Fields;
+namespace Marshmallow\AdvancedNovaMediaLibrary\Fields;
 
 use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Support\Collection;
@@ -25,7 +25,7 @@ trait HandlesExistingMediaTrait
 
         return collect($data)
             ->filter(function ($value) use ($addedMediaIds) {
-                // New files will come in as UploadedFile objects, 
+                // New files will come in as UploadedFile objects,
                 // whereas Vapor-uploaded files will come in as arrays.
                 return (! ($value instanceof UploadedFile)) && (! (is_array($value))) && ! (in_array($value, $addedMediaIds));
             })->map(function ($model_id, int $index) use ($request, $model, $collection) {

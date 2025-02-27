@@ -1,8 +1,8 @@
 <?php
 
-namespace Ebess\AdvancedNovaMediaLibrary\Http\Resources;
+namespace Marshmallow\AdvancedNovaMediaLibrary\Http\Resources;
 
-use Ebess\AdvancedNovaMediaLibrary\Fields\HandlesConversionsTrait;
+use Marshmallow\AdvancedNovaMediaLibrary\Fields\HandlesConversionsTrait;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class MediaResource extends JsonResource

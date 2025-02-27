@@ -1,6 +1,6 @@
 <?php
 
-namespace Ebess\AdvancedNovaMediaLibrary\Http\Requests;
+namespace Marshmallow\AdvancedNovaMediaLibrary\Http\Requests;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;

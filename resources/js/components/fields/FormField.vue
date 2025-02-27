@@ -21,13 +21,15 @@
         />
 
         <span v-if="field.existingMedia">
-          <OutlineButton
+          <Button
+            dusk="cancel-update-button"
+            variant="ghost"
             type="button"
             class="ml-2 mt-2"
             @click.prevent="existingMediaOpen = true"
           >
             {{ openExistingMediaLabel }}
-          </OutlineButton>
+          </Button>
           <ExistingMedia
             :open="existingMediaOpen"
             @close="existingMediaOpen = false"
@@ -41,6 +43,7 @@
 </template>
 
 <script>
+import { Button } from "laravel-nova-ui";
 import { FormField, HandlesValidationErrors } from "laravel-nova";
 import Vapor from "laravel-vapor";
 import Gallery from "../Gallery";
@@ -55,6 +58,7 @@ export default {
     Gallery,
     FullWidthField,
     ExistingMedia,
+    Button,
   },
   props: ["resourceName", "resourceId", "field"],
   data() {

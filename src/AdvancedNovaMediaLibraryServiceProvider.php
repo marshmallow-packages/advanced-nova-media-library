@@ -1,6 +1,6 @@
 <?php
 
-namespace Ebess\AdvancedNovaMediaLibrary;
+namespace Marshmallow\AdvancedNovaMediaLibrary;
 
 use Illuminate\Support\Facades\Route;
 use Laravel\Nova\Nova;
@@ -31,8 +31,8 @@ class AdvancedNovaMediaLibraryServiceProvider extends ServiceProvider
         if ($this->app->routesAreCached()) return;
 
         Route::middleware(['nova'])
-            ->namespace('Ebess\AdvancedNovaMediaLibrary\Http\Controllers')
-            ->prefix('nova-vendor/ebess/advanced-nova-media-library')
+            ->namespace('Marshmallow\AdvancedNovaMediaLibrary\Http\Controllers')
+            ->prefix('nova-vendor/marshmallow/advanced-nova-media-library')
             ->group(__DIR__ . '/../routes/api.php');
     }
 }

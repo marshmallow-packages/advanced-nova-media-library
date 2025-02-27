@@ -7,21 +7,23 @@ images and order them by drag and drop.
 > This package was originally forked from [ebess/advanced-nova-media-library](https://github.com/ebess/advanced-nova-media-library). Since we were making many opinionated changes, we decided to continue development in our own version rather than submitting pull requests that might not benefit all users of the original package. You're welcome to use this package, we're actively maintaining it. If you encounter any issues, please don't hesitate to reach out.
 
 ##### Table of Contents
-* [Examples](#examples)
-* [Install](#install)
-* [Model media configuration](#model-media-configuration)
-* [Generic file management](#generic-file-management)
-* [Single image upload](#single-image-upload)
-* [Multiple image upload](#multiple-image-upload)
-* [Selecting existing media](#selecting-existing-media)
-* [Names of uploaded images](#names-of-uploaded-images)
-* [Image cropping](#image-cropping)
-* [Custom properties](#custom-properties)
-* [Custom headers](#custom-headers)
-* [Media Field (Video)](#media-field-video)
-* [Change log](#change-log)
+
+-   [Examples](#examples)
+-   [Install](#install)
+-   [Model media configuration](#model-media-configuration)
+-   [Generic file management](#generic-file-management)
+-   [Single image upload](#single-image-upload)
+-   [Multiple image upload](#multiple-image-upload)
+-   [Selecting existing media](#selecting-existing-media)
+-   [Names of uploaded images](#names-of-uploaded-images)
+-   [Image cropping](#image-cropping)
+-   [Custom properties](#custom-properties)
+-   [Custom headers](#custom-headers)
+-   [Media Field (Video)](#media-field-video)
+-   [Change log](#change-log)
 
 ## Examples
+
 ![Cropping](/docs/cropping.gif)
 ![Single image upload](/docs/single-image.png)
 ![Multiple image upload](/docs/multiple-images.png)
@@ -29,8 +31,9 @@ images and order them by drag and drop.
 ![Generic file management](/docs/file-management.png)
 
 ## Install
+
 ```bash
-composer require ebess/advanced-nova-media-library
+composer require marshmallow/advanced-nova-media-library
 ```
 
 ```bash
@@ -40,6 +43,7 @@ php artisan vendor:publish --tag=nova-media-library
 ## Model media configuration
 
 Let's assume you configured your model to use the media library like following:
+
 ```php
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -64,7 +68,7 @@ public function registerMediaCollections(): void
 In order to be able to upload and handle generic files just go ahead and use the `Files` field.
 
 ```php
-use Ebess\AdvancedNovaMediaLibrary\Fields\Files;
+use Marshmallow\AdvancedNovaMediaLibrary\Fields\Files;
 
 Files::make('Single file', 'one_file'),
 Files::make('Multiple files', 'multiple_files'),
@@ -75,7 +79,7 @@ Files::make('Multiple files', 'multiple_files'),
 ![Single image upload](/docs/single-image.png)
 
 ```php
-use Ebess\AdvancedNovaMediaLibrary\Fields\Images;
+use Marshmallow\AdvancedNovaMediaLibrary\Fields\Images;
 
 public function fields(Request $request)
 {
@@ -94,7 +98,7 @@ If you enable the multiple upload ability, you can **order the images via drag &
 ![Multiple image upload](/docs/multiple-images.png)
 
 ```php
-use Ebess\AdvancedNovaMediaLibrary\Fields\Images;
+use Marshmallow\AdvancedNovaMediaLibrary\Fields\Images;
 
 public function fields(Request $request)
 {
@@ -123,17 +127,22 @@ all over again, use this feature. Selecting an already existing media will **cop
 **Attention**: This feature will expose an endpoint to every user of your application to search existing media.
 If your media upload / custom properties on the media models are confidential, **do not enable this feature!**
 
-* Publish the config files if you did not yet
+-   Publish the config files if you did not yet
+
 ```bash
 artisan vendor:publish --tag=nova-media-library
 ```
-* Enable this feature in config file *config/nova-media-library*
+
+-   Enable this feature in config file _config/nova-media-library_
+
 ```php
 return [
     'enable-existing-media' => true,
 ];
 ```
-* Enable the selection of existing media field
+
+-   Enable the selection of existing media field
+
 ```php
 Images::make('Image')->enableExistingMedia(),
 ```
@@ -189,17 +198,21 @@ limited to mime type of `image/jpg`, `image/jpeg` and `image/png`.
 All custom properties are copied form the old to the new model.
 
 To disable this feature use the `croppable` method:
+
 ```php
 Images::make('Gallery')->croppable(false);
 ```
 
 You can set all configurations like ratio e.g. as following:
+
 ```php
 Images::make('Gallery')->croppingConfigs(['aspectRatio' => 4/3]);
 ```
+
 Available cropping configuration, see https://github.com/timtnleeProject/vuejs-clipper#clipper-basic.
 
 It is possible to enforce cropping on upload, for example to ensure the image has the set aspect ratio:
+
 ```php
 Images::make('Gallery')->mustCrop();
 ```
@@ -207,6 +220,7 @@ Images::make('Gallery')->mustCrop();
 ### Disabling cropping by default
 
 By default, the cropping feature is enabled. To disable it by default for all images set `default-croppable` in `config/nova-media-library.php` to `false`:
+
 ```php
 return [
     'default-croppable' => false,
@@ -238,7 +252,7 @@ Files::make('Multiple files', 'multiple_files')
     ]);
 ```
 
-## Show image statistics *(size, dimensions, type)*
+## Show image statistics _(size, dimensions, type)_
 
 ![Image statistics](/docs/show-statistics.png)
 
@@ -261,7 +275,7 @@ Images::make('Gallery')
 In order to handle videos with thumbnails you need to use the `Media` field instead of `Images`. This way you are able to upload videos as well.
 
 ```php
-use Ebess\AdvancedNovaMediaLibrary\Fields\Media;
+use Marshmallow\AdvancedNovaMediaLibrary\Fields\Media;
 
 class Category extends Resource
 {
@@ -304,5 +318,5 @@ Files::make('Multiple files', 'multiple_files')
 
 # Credits
 
-- [nova media library](https://github.com/jameslkingsley/nova-media-library)
-- [ebess/advanced-nova-media-library](https://github.com/ebess/advanced-nova-media-library)
+-   [nova media library](https://github.com/jameslkingsley/nova-media-library)
+-   [ebess/advanced-nova-media-library](https://github.com/ebess/advanced-nova-media-library)

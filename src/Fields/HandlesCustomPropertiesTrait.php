@@ -1,6 +1,6 @@
 <?php
 
-namespace Ebess\AdvancedNovaMediaLibrary\Fields;
+namespace Marshmallow\AdvancedNovaMediaLibrary\Fields;
 
 use Illuminate\Support\Str;
 use Laravel\Nova\Fields\Field;

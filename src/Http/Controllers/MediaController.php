@@ -1,12 +1,12 @@
 <?php
 
-namespace Ebess\AdvancedNovaMediaLibrary\Http\Controllers;
+namespace Marshmallow\AdvancedNovaMediaLibrary\Http\Controllers;
 
 use Exception;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
-use Ebess\AdvancedNovaMediaLibrary\Http\Requests\MediaRequest;
-use Ebess\AdvancedNovaMediaLibrary\Http\Resources\MediaResource;
+use Marshmallow\AdvancedNovaMediaLibrary\Http\Requests\MediaRequest;
+use Marshmallow\AdvancedNovaMediaLibrary\Http\Resources\MediaResource;
 
 class MediaController extends Controller
 {

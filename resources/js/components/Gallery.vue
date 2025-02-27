@@ -89,17 +89,18 @@
       @change="add"
     />
     <label :for="`__media__${field.attribute}`" class="">
-      <DefaultButton type="button" @click.prevent="focusFileInput">
+      <Button type="button" @click.prevent="focusFileInput">
         <template v-if="uploading"
           >{{ __("Uploading") }} ({{ uploadProgress }}%)</template
         >
         <template v-else>{{ label }}</template>
-      </DefaultButton>
+      </Button>
     </label>
   </span>
 </template>
 
 <script>
+import { Button } from "laravel-nova-ui";
 import Vapor from "laravel-vapor";
 import CustomPropertiesModal from "./CustomPropertiesModal";
 import SingleMedia from "./SingleMedia";
@@ -110,6 +111,7 @@ import Draggable from "vuedraggable";
 
 export default {
   components: {
+    Button,
     Draggable,
     SingleFile,
     SingleMedia,

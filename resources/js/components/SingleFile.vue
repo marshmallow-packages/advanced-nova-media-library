@@ -6,14 +6,14 @@
         :href="image.__media_urls__.__original__"
         target="_blank"
       >
-        <Icon type="search" view-box="0 0 20 20" width="16" height="16" />
+        <Icon name="magnifying-glass" type="mini" />
       </a>
       <a
         v-if="downloadUrl"
         class="mr-2 hover:text-primary-500"
         :href="downloadUrl"
       >
-        <Icon type="download" view-box="0 0 20 22" width="16" height="16" />
+        <Icon name="arrow-top-right-on-square" type="mini" />
       </a>
       <span class="label truncate">
         {{ image.file_name }}
@@ -25,7 +25,7 @@
         href="#"
         @click.prevent="$emit('edit-custom-properties', image)"
       >
-        <Icon type="pencil" view-box="0 0 20 20" width="16" height="16" />
+        <Icon name="pencil" type="mini" />
       </a>
       <a
         v-if="removable"
@@ -33,7 +33,7 @@
         href="#"
         @click.prevent="$emit('remove')"
       >
-        <Icon type="trash" view-box="0 0 20 20" width="16" height="16" />
+        <Icon name="trash" type="mini" />
       </a>
     </div>
   </GalleryItem>
@@ -41,11 +41,13 @@
 
 <script>
 import GalleryItem from "./GalleryItem";
+import { Icon } from "laravel-nova-ui";
 
 export default {
   props: ["image", "removable", "isCustomPropertiesEditable"],
   components: {
     GalleryItem,
+    Icon,
   },
   computed: {
     downloadUrl() {

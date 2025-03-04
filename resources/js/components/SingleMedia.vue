@@ -10,7 +10,7 @@
         :href="downloadUrl"
         title="Download"
       >
-        <Icon type="download" view-box="0 0 20 22" width="16" height="16" />
+        <Icon name="arrow-top-right-on-square" type="mini" />
       </a>
       <div
         v-if="downloadUrl"
@@ -18,7 +18,7 @@
         @click.prevent="copyUrl"
         title="Copy"
       >
-        <Icon type="clipboard" view-box="0 0 20 22" width="16" height="16" />
+        <Icon name="clipboard" type="mini" />
       </div>
       <a
         v-if="removable"
@@ -27,7 +27,7 @@
         @click.prevent="$emit('remove')"
         title="Remove"
       >
-        <Icon type="trash" view-box="0 0 20 20" width="16" height="16" />
+        <Icon name="trash" type="mini" />
       </a>
       <a
         v-if="isCustomPropertiesEditable"
@@ -36,14 +36,14 @@
         @click.prevent="$emit('edit-custom-properties', image)"
         title="Edit custom properties"
       >
-        <Icon type="pencil" view-box="0 0 20 20" width="16" height="16" />
+        <Icon name="pencil" type="mini" />
       </a>
       <a
         class="preview hover:text-primary-500"
         href="#"
         @click.prevent="showPreview"
       >
-        <Icon type="search" view-box="0 0 20 20" width="30" height="30" />
+        <Icon name="magnifying-glass" type="mini" />
       </a>
       <a
         v-if="croppable"
@@ -51,7 +51,7 @@
         href="#"
         @click.prevent="$emit('crop-start', image)"
       >
-        <Icon type="scissors" view-box="0 0 20 20" width="16" height="16" />
+        <Icon name="scissors" type="mini" />
       </a>
     </div>
     <img
@@ -83,10 +83,12 @@
 
 <script>
 import GalleryItem from "./GalleryItem";
+import { Icon } from "laravel-nova-ui";
 
 export default {
   components: {
     GalleryItem,
+    Icon,
   },
   props: [
     "image",
@@ -162,7 +164,7 @@ export default {
       video.onloadedmetadata = () => {
         video.currentTime = Math.min(
           Math.max(0, (secs < 0 ? video.duration : 0) + secs),
-          video.duration
+          video.duration,
         );
       };
       video.onseeked = (e) => {
@@ -201,18 +203,18 @@ export default {
               src.charAt(src.length - 2) === "="
                 ? 2
                 : src.charAt(src.length - 1) === "="
-                ? 1
-                : 0;
+                  ? 1
+                  : 0;
             this.size = this.formatBytes(base64Length * 0.75 - padding);
           } else if (window.performance !== undefined) {
             const imgResourceTimings = window.performance.getEntriesByName(
-              this.$refs.image.currentSrc
+              this.$refs.image.currentSrc,
             );
             if (imgResourceTimings.length) {
               const decodedBodySize = imgResourceTimings[0].decodedBodySize;
               if (decodedBodySize) {
                 this.size = this.formatBytes(
-                  imgResourceTimings[0].decodedBodySize
+                  imgResourceTimings[0].decodedBodySize,
                 );
               } else {
                 this.size = undefined;

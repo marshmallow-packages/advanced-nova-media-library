@@ -23,9 +23,8 @@
           <div class="px-4 self-center">
             <div class="relative">
               <Icon
-                type="search"
+                name="magnifying-glass"
                 class="inline-block absolute ml-2 text-gray-400"
-                width="20"
                 style="top: 4px"
               />
               <input
@@ -96,10 +95,12 @@
 <script>
 import ExistingMediaItem from "./ExistingMediaItem";
 import debounce from "lodash/debounce";
+import { Icon } from "laravel-nova-ui";
 
 export default {
   components: {
     ExistingMediaItem,
+    Icon,
   },
   data() {
     let aThis = this;
@@ -174,7 +175,7 @@ export default {
         `/nova-vendor/marshmallow/advanced-nova-media-library/media`,
         {
           params: this.requestParams,
-        }
+        },
       );
     },
   },

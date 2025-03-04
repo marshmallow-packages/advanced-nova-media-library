@@ -15,6 +15,7 @@
         "laravel-mix": "^6.0.44",
         "object-to-formdata": "^1.5.2",
         "resolve-url-loader": "5.0.0",
+        "laravel-nova-devtool": "file:vendor/laravel/nova-devtool",
         "sass": "^1.52.1",
         "sass-loader": "13.0.0",
         "vue-loader": "^17.0.0",

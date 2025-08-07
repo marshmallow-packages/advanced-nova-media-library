@@ -70,11 +70,11 @@ class MediaController extends Controller
     /**
      * Updates a MediaItem.
      *
-     * @param $request
-     * @param $mediaItem
-     * @return Illuminate\Http\Response
+     * @param MediaRequest $request
+     * @param mixed $mediaItemId
+     * @return \Illuminate\Http\JsonResponse
      **/
-    public function updateMediaItem(MediaRequest $request,  $mediaItemId)
+    public function updateMediaItem(MediaRequest $request, $mediaItemId)
     {
         $mediaClass = config('media-library.media_model');
         $mediaItem = $mediaClass::findOrFail($mediaItemId);
@@ -90,7 +90,8 @@ class MediaController extends Controller
     }
 
     /**
-     * @param \Spatie\MediaLibrary\Models\Media $media
+     * @param \Spatie\MediaLibrary\MediaCollections\Models\Media $media
+     * @param array $properties
      */
     private function fillMediaCustomProperties($media, $properties)
     {

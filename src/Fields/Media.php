@@ -9,6 +9,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -51,14 +52,14 @@ class Media extends Field
 
     public function rules($rules): self
     {
-        $this->collectionMediaRules = ($rules instanceof Rule || is_string($rules)) ? func_get_args() : $rules;
+        $this->collectionMediaRules = ($rules instanceof Rule || $rules instanceof ValidationRule || is_string($rules)) ? func_get_args() : $rules;
 
         return $this;
     }
 
     public function singleMediaRules($rules): self
     {
-        $this->singleMediaRules = ($rules instanceof Rule || is_string($rules)) ? func_get_args() : $rules;
+        $this->singleMediaRules = ($rules instanceof Rule || $rules instanceof ValidationRule || is_string($rules)) ? func_get_args() : $rules;
 
         return $this;
     }
@@ -115,11 +116,11 @@ class Media extends Field
     /**
      * Set the maximum accepted file size for the frontend in kBs
      *
-     * @param int $maxSize
+     * @param int|null $maxFileSize
      *
      * @return $this
      */
-    public function setMaxFileSize(int $maxFileSize = null)
+    public function setMaxFileSize(?int $maxFileSize = null)
     {
         if (!$maxFileSize) {
             $maxFileSize = config('media-library.max_file_size') / 1024;
@@ -279,9 +280,9 @@ class Media extends Field
         });
 
         $medias->pluck('id')->diff($remainingIds)->each(function ($id) use ($medias) {
-            /** @var Media $media */
-            if ($media = $medias->where('id', $id)->first()) {
-                $media->delete();
+            /** @var \Spatie\MediaLibrary\MediaCollections\Models\Media $mediaItem */
+            if ($mediaItem = $medias->where('id', $id)->first()) {
+                $mediaItem->delete();
             }
         });
 
@@ -289,8 +290,8 @@ class Media extends Field
     }
 
     /**
-     * @param HasMedia|HasMediaTrait $resource
-     * @param null $attribute
+     * @param HasMedia $resource
+     * @param string|null $attribute
      */
     public function resolve($resource, ?string $attribute = null): void
     {
@@ -329,7 +330,7 @@ class Media extends Field
     }
 
     /**
-     * @param HasMedia|HasMediaTrait $resource
+     * @param HasMedia $resource
      */
     protected function checkCollectionIsMultiple(HasMedia $resource, string $collectionName)
     {

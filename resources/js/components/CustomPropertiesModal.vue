@@ -1,40 +1,23 @@
 <template>
-  <Modal
-    :show="true"
-    maxWidth="2xl"
-    @modal-close="handleClose"
-    :classWhitelist="[
-      'flatpickr-current-month',
-      'flatpickr-next-month',
-      'flatpickr-prev-month',
-      'flatpickr-weekday',
-      'flatpickr-weekdays',
-      'flatpickr-calendar',
-    ]"
-  >
+  <Modal :show="true" maxWidth="2xl" @modal-close="handleClose" :classWhitelist="[
+    'flatpickr-current-month',
+    'flatpickr-next-month',
+    'flatpickr-prev-month',
+    'flatpickr-weekday',
+    'flatpickr-weekdays',
+    'flatpickr-calendar',
+  ]">
     <card class="overflow-hidden">
-      <form
-        class="rounded-lg shadow-lg overflow-hidden w-action-fields"
-        @submit.prevent="handleUpdate"
-        autocomplete="off"
-      >
+      <form class="rounded-lg shadow-lg overflow-hidden w-action-fields" @submit.prevent="handleUpdate"
+        autocomplete="off">
         <div v-for="field in fields" :key="field.attribute" class="action">
           <component :is="'form-' + field.component" :field="field" />
         </div>
 
         <div class="bg-30 px-6 py-3 flex">
           <div class="flex items-center ml-auto">
-            <OutlineButton
-              type="button"
-              class="btn text-80 font-normal h-9 px-3 mr-3 btn-link"
-              @click.prevent="handleClose"
-            >
-              {{ __("Cancel") }}
-            </OutlineButton>
-
-            <DefaultButton type="submit" class="btn btn-default btn-primary">
-              {{ __("Update") }}
-            </DefaultButton>
+            <Button @click.prevent="handleClose" variant="link" :label="__('Cancel')" />
+            <Button :label="__('Update')" variant="solid" @click.prevent="handleUpdate" />
           </div>
         </div>
       </form>
@@ -43,56 +26,47 @@
 </template>
 
 <script>
+import { Button } from 'laravel-nova-ui'
+
 export default {
+  components: {
+    Button,
+  },
   props: {
     fields: {
       type: Array,
       required: true,
-    },
-    newItem: Object,
-    mediaModel: Object,
+    }
   },
 
   methods: {
     handleClose() {
-      this.$emit("close");
-    },
-
-    handleCreate() {
-      let formData = new FormData();
-      this.fields.forEach((field) => field.fill(formData));
-      this.$emit("create", formData);
+      this.$emit('close')
     },
 
     handleUpdate() {
-      if (this.mediaModel.id == undefined) {
-        return this.handleCreate();
+      let formData = new FormData()
+      let hasErrors = false
+
+      // Validate all fields before submission
+      this.fields.forEach(field => {
+        if (field.fill) {
+          try {
+            field.fill(formData)
+          } catch (error) {
+            console.error('Error filling field:', field.attribute, error)
+            hasErrors = true
+          }
+        }
+      })
+
+      if (hasErrors) {
+        Nova.error(this.__('Please check the form for errors'))
+        return
       }
 
-      this.fields.forEach((field) => {
-        const formData = new FormData();
-        field.fill(formData);
-
-        const values = Array.from(formData.values());
-
-        if (field.component === "trix-field") {
-          this.newItem[field.attribute] = values[0];
-          return;
-        }
-
-        // Is array
-        const firstKey = Array.from(formData.keys())[0];
-        if (firstKey && firstKey.endsWith("]")) {
-          this.newItem[field.attribute] = values || [];
-        } else {
-          if (values.length === 0) this.newItem[field.attribute] = void 0;
-          if (values.length === 1) this.newItem[field.attribute] = values[0];
-          if (values.length > 1) this.newItem[field.attribute] = values;
-        }
-      });
-
-      this.$emit("update", this.newItem);
-    },
-  },
-};
+      this.$emit('update', formData)
+    }
+  }
+}
 </script>

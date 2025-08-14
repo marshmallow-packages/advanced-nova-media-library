@@ -67,10 +67,11 @@
               customPropertiesImageIndex !== null &&
               currentImageId == element.id
             "
-            v-model="images[index]"
+            v-model="images[customPropertiesImageIndex]"
             :show="customPropertiesModalOpen"
             :fields="customPropertiesFields"
-            @close="customPropertiesImageIndex = null"
+            @close="closeCustomPropertiesModal"
+            @update:modelValue="updateImageAtIndex"
           />
         </div>
       </template>
@@ -193,10 +194,35 @@ export default {
     },
 
     openModal(image) {
-      let index = image.id;
-      this.currentImageId = index;
+      // Find the index of the image in the images array
+      let index = this.images.findIndex(img => img.id === image.id);
+      if (index === -1) {
+        // If not found by id, try to find by reference
+        index = this.images.indexOf(image);
+      }
+      
+      this.currentImageId = image.id;
       this.customPropertiesModalOpen = true;
       this.customPropertiesImageIndex = index;
+    },
+
+    closeCustomPropertiesModal() {
+      this.customPropertiesImageIndex = null;
+      this.customPropertiesModalOpen = false;
+      this.currentImageId = null;
+    },
+
+    updateImageAtIndex(updatedImage) {
+      if (this.customPropertiesImageIndex !== null) {
+        // Vue 3 compatible way to update array element
+        this.images[this.customPropertiesImageIndex] = updatedImage;
+        
+        // Trigger reactivity by reassigning the array
+        this.images = [...this.images];
+        
+        // Emit the update to parent
+        this.$emit("update:modelValue", this.images);
+      }
     },
 
     onCroppedImage(image) {

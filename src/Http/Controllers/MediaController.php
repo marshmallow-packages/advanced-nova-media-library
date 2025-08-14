@@ -55,16 +55,26 @@ class MediaController extends Controller
 
     public function updateMediaItemProperties(MediaRequest $request, $mediaItemId)
     {
-        $custom_properties = $request->_mediaProperties;
+        $custom_properties = $request->input('_mediaProperties', []);
+
+        // Fallback to direct properties if _mediaProperties is not set
+        if (empty($custom_properties)) {
+            $custom_properties = $request->except(['_mediaId', '_mediaData', '_token']);
+        }
 
         $mediaClass = config('media-library.media_model');
         $mediaItem = $mediaClass::findOrFail($mediaItemId);
 
-        if (!isset($mediaItem)) return response()->json(['error' => 'media_item_not_found'], 400);
+        if (!isset($mediaItem)) {
+            return response()->json(['error' => 'media_item_not_found'], 400);
+        }
 
         $this->fillMediaCustomProperties($mediaItem, $custom_properties);
 
-        return response()->json(['success' => true], 200);
+        return response()->json([
+            'success' => true,
+            'message' => 'Custom properties updated successfully'
+        ], 200);
     }
 
     /**
@@ -103,6 +113,13 @@ class MediaController extends Controller
             if ($mm_tag) {
                 $media->$key = $value;
             } else {
+                // Handle boolean values properly
+                if ($value === 'true' || $value === '1') {
+                    $value = true;
+                } elseif ($value === 'false' || $value === '0') {
+                    $value = false;
+                }
+                
                 $media->setCustomProperty($key, $value);
             }
         }

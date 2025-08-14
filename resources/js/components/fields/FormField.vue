@@ -121,6 +121,16 @@ export default {
             {},
             formData
           );
+        } else {
+          // For existing images, also include custom properties
+          objectToFormData(
+            {
+              [`__media-custom-properties__[${attribute}][${index}]`]:
+                this.getImageCustomProperties(file),
+            },
+            {},
+            formData
+          );
         }
       });
     };

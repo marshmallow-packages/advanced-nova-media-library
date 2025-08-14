@@ -1,78 +1,34 @@
 <template>
-  <div
-    class="gallery"
-    :class="{ editable }"
-    @mouseover="mouseOver = true"
-    @mouseout="mouseOver = false"
-  >
-    <Cropper
-      v-if="field.type === 'media' && editable"
-      :image="cropImage"
-      :must-crop="field.mustCrop"
-      @close="onCloseCroppedImage"
-      @crop-completed="onCroppedImage"
-      :configs="field.croppingConfigs"
-    />
+  <div class="gallery" :class="{ editable }" @mouseover="mouseOver = true" @mouseout="mouseOver = false">
+    <Cropper v-if="field.type === 'media' && editable" :image="cropImage" :must-crop="field.mustCrop"
+      @close="onCloseCroppedImage" @crop-completed="onCroppedImage" :configs="field.croppingConfigs" />
 
     <template v-if="draggable"></template>
 
-    <Draggable
-      v-if="images.length > 0"
-      v-model="images"
-      item-key="id"
-      class="gallery-list clearfix"
-      :class="{
-        ' flex-wrap flex': field.type !== 'file',
-      }"
-    >
+    <Draggable v-if="images.length > 0" v-model="images" item-key="id" class="gallery-list clearfix" :class="{
+      ' flex-wrap flex': field.type !== 'file',
+    }">
       <template #item="{ element, index }">
         <div :class="field.type !== 'media'">
           <div v-if="field.type == 'media'">
-            <SingleMedia
-              class="mb-3 p-3 mr-3"
-              :key="index"
-              :image="element"
-              :field="field"
-              :editable="editable"
-              :removable="removable || editable"
-              @remove="remove(index)"
-              @copy="$emit('copy', item)"
-              :is-custom-properties-editable="
-                customProperties && customPropertiesFields.length > 0
-              "
-              @edit-custom-properties="openModal($event)"
-              @crop-start="cropImageQueue.push($event)"
-            />
+            <SingleMedia class="mb-3 p-3 mr-3" :key="index" :image="element" :field="field" :editable="editable"
+              :removable="removable || editable" @remove="remove(index)" @copy="$emit('copy', item)"
+              :is-custom-properties-editable="customProperties && customPropertiesFields.length > 0
+                " @edit-custom-properties="openModal($event)" @crop-start="cropImageQueue.push($event)" />
           </div>
           <div v-else-if="field.type == 'file'">
-            <SingleFile
-              class="mb-3 p-3 mr-3"
-              :key="index"
-              :image="element"
-              :field="field"
-              :editable="editable"
-              :removable="removable || editable"
-              @remove="remove(index)"
-              :is-custom-properties-editable="
-                customProperties && customPropertiesFields.length > 0
-              "
-              @edit-custom-properties="openModal($event)"
-              @crop-start="cropImageQueue.push($event)"
-            />
+            <SingleFile class="mb-3 p-3 mr-3" :key="index" :image="element" :field="field" :editable="editable"
+              :removable="removable || editable" @remove="remove(index)" :is-custom-properties-editable="customProperties && customPropertiesFields.length > 0
+                " @edit-custom-properties="openModal($event)" @crop-start="cropImageQueue.push($event)" />
           </div>
 
-          <CustomProperties
-            v-if="
-              customPropertiesFields.length > 0 &&
-              customPropertiesImageIndex !== null &&
-              currentImageId == element.id
-            "
-            v-model="images[customPropertiesImageIndex]"
-            :show="customPropertiesModalOpen"
-            :fields="customPropertiesFields"
-            @close="closeCustomPropertiesModal"
-            @update:modelValue="updateImageAtIndex"
-          />
+          <CustomProperties v-if="
+            customPropertiesFields.length > 0 &&
+            customPropertiesImageIndex !== null &&
+            currentImageId == element.id
+          " v-model="images[customPropertiesImageIndex]" :show="customPropertiesModalOpen"
+            :fields="customPropertiesFields" @close="closeCustomPropertiesModal"
+            @update:modelValue="updateImageAtIndex" />
         </div>
       </template>
     </Draggable>
@@ -80,20 +36,11 @@
   </div>
 
   <span v-if="editable" class="form-file">
-    <input
-      :id="`__media__${field.attribute}`"
-      :multiple="multiple"
-      ref="file"
-      class="form-file-input"
-      type="file"
-      :disabled="uploading"
-      @change="add"
-    />
+    <input :id="`__media__${field.attribute}`" :multiple="multiple" ref="file" class="form-file-input" type="file"
+      :disabled="uploading" @change="add" />
     <label :for="`__media__${field.attribute}`" class="">
       <Button type="button" @click.prevent="focusFileInput">
-        <template v-if="uploading"
-          >{{ __("Uploading") }} ({{ uploadProgress }}%)</template
-        >
+        <template v-if="uploading">{{ __("Uploading") }} ({{ uploadProgress }}%)</template>
         <template v-else>{{ label }}</template>
       </Button>
     </label>
@@ -200,7 +147,7 @@ export default {
         // If not found by id, try to find by reference
         index = this.images.indexOf(image);
       }
-      
+
       this.currentImageId = image.id;
       this.customPropertiesModalOpen = true;
       this.customPropertiesImageIndex = index;
@@ -216,10 +163,10 @@ export default {
       if (this.customPropertiesImageIndex !== null) {
         // Vue 3 compatible way to update array element
         this.images[this.customPropertiesImageIndex] = updatedImage;
-        
+
         // Trigger reactivity by reassigning the array
         this.images = [...this.images];
-        
+
         // Emit the update to parent
         this.$emit("update:modelValue", this.images);
       }
@@ -426,6 +373,7 @@ export default {
   margin-top: 5px;
   width: 100%;
   display: block;
+
   &.editable {
     .gallery-item {
       cursor: grab;

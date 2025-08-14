@@ -119,7 +119,7 @@ class MediaController extends Controller
                 } elseif ($value === 'false' || $value === '0') {
                     $value = false;
                 }
-                
+
                 $media->setCustomProperty($key, $value);
             }
         }

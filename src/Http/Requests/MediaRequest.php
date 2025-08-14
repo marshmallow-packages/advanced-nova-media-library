@@ -39,17 +39,17 @@ class MediaRequest extends FormRequest
                 $keys[] = $key;
             }
         }
-        
+
         $data = $this->only($keys);
         $customProperties = Arr::get($data, 'custom_properties', []);
-        
+
         // Also check for direct custom property keys that might be passed
         foreach ($this->all() as $key => $value) {
             if (!in_array($key, ['_mediaId', '_mediaData', '_mediaProperties', '_token', 'search_text', 'page', 'per_page'])) {
                 $customProperties[$key] = $value;
             }
         }
-        
+
         return $customProperties;
     }
 }

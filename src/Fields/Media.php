@@ -9,10 +9,9 @@ use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Contracts\Validation\Rule;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Spatie\MediaLibrary\InteractsWithMedia;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -197,12 +196,12 @@ class Media extends Field
         Validator::make($requestToValidateCollectionMedia, [$requestAttribute => $this->collectionMediaRules])
             ->validate();
 
-        return function () use ($request, $data, $attribute, $model) {
+        return function () use ($request, $data, $attribute, $model, $requestAttribute) {
 
             $this->handleMedia($request, $model, $attribute, $data);
 
             // fill custom properties for existing media
-            // $this->fillCustomPropertiesFromRequest($request, $model, $attribute);
+            $this->fillCustomPropertiesFromRequest($request, $requestAttribute, $model, $attribute);
         };
     }
 
@@ -264,7 +263,7 @@ class Media extends Field
                 $media = $media->toMediaCollection($collection);
 
                 // fill custom properties for recently created media
-                $this->fillMediaCustomPropertiesFromRequest($request, $media, $index, $collection);
+                $this->fillMediaCustomPropertiesFromRequest($request, $media, $index, $collection, $collection);
 
                 return $media->getKey();
             });

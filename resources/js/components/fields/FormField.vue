@@ -1,41 +1,19 @@
 <template>
-  <component
-    :is="field.fullSize ? 'FullWidthField' : 'DefaultField'"
-    :field="field"
-    :errors="errors"
-    :show-help-text="showHelpText"
-  >
+  <component :is="field.fullSize ? 'FullWidthField' : 'DefaultField'" :field="field" :errors="errors"
+    :show-help-text="showHelpText">
     <template #field>
       <div :class="{ 'px-6 md:px-8 pt-6': field.fullSize }">
-        <Gallery
-          ref="gallery"
-          v-if="hasSetInitialValue"
-          v-model="value"
-          :editable="!field.readonly"
-          :removable="field.removable"
-          custom-properties
-          :field="field"
-          :multiple="field.multiple"
-          :uploads-to-vapor="field.uploadsToVapor"
-          @copy="copyUrl"
-        />
+        <Gallery ref="gallery" v-if="hasSetInitialValue" v-model="value" :editable="!field.readonly"
+          :removable="field.removable" custom-properties :field="field" :multiple="field.multiple"
+          :uploads-to-vapor="field.uploadsToVapor" @copy="copyUrl" />
 
         <span v-if="field.existingMedia">
-          <Button
-            dusk="cancel-update-button"
-            variant="ghost"
-            type="button"
-            class="ml-2 mt-2"
-            @click.prevent="existingMediaOpen = true"
-          >
+          <Button dusk="cancel-update-button" variant="ghost" type="button" class="ml-2 mt-2"
+            @click.prevent="existingMediaOpen = true">
             {{ openExistingMediaLabel }}
           </Button>
-          <ExistingMedia
-            :open="existingMediaOpen"
-            @close="existingMediaOpen = false"
-            @select="addExistingItem"
-            @copy="copyUrl"
-          />
+          <ExistingMedia :open="existingMediaOpen" @close="existingMediaOpen = false" @select="addExistingItem"
+            @copy="copyUrl" />
         </span>
       </div>
     </template>

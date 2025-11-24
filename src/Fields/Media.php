@@ -12,6 +12,7 @@ use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Validation\ValidationException;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -179,22 +180,64 @@ class Media extends Field
             ->filter(function ($value) {
                 return $value instanceof UploadedFile;
             })
-            ->each(function ($media) use ($request, $requestAttribute) {
+            ->each(function ($media, $index) use ($request, $requestAttribute) {
                 $requestToValidateSingleMedia = array_merge($request->toArray(), [
                     $requestAttribute => $media,
                 ]);
 
-                Validator::make($requestToValidateSingleMedia, [
+                $validator = Validator::make($requestToValidateSingleMedia, [
                     $requestAttribute => array_merge($this->defaultValidatorRules, (array)$this->singleMediaRules),
-                ])->validate();
+                ]);
+
+                if ($validator->fails()) {
+                    $errors = $validator->errors();
+                    $errorMessages = [];
+
+                    foreach ($errors->get($requestAttribute) as $error) {
+                        $errorMessages[] = $error;
+                    }
+
+                    // Add file information to make the error more helpful
+                    $fileName = $media instanceof UploadedFile ? $media->getClientOriginalName() : 'Unknown file';
+                    $fileSize = $media instanceof UploadedFile ? round($media->getSize() / 1024 / 1024, 2) : 0;
+
+                    $detailedMessage = sprintf(
+                        'File "%s" (%.2f MB): %s',
+                        $fileName,
+                        $fileSize,
+                        implode(', ', $errorMessages)
+                    );
+
+                    throw ValidationException::withMessages([
+                        $requestAttribute => [$detailedMessage]
+                    ]);
+                }
+
+                $validator->validate();
             });
 
         $requestToValidateCollectionMedia = array_merge($request->toArray(), [
             $requestAttribute => $data,
         ]);
 
-        Validator::make($requestToValidateCollectionMedia, [$requestAttribute => $this->collectionMediaRules])
-            ->validate();
+        $collectionValidator = Validator::make($requestToValidateCollectionMedia, [
+            $requestAttribute => $this->collectionMediaRules
+        ]);
+
+        if ($collectionValidator->fails()) {
+            $errors = $collectionValidator->errors();
+            $errorMessages = [];
+
+            foreach ($errors->get($requestAttribute) as $error) {
+                $errorMessages[] = $error;
+            }
+
+            throw ValidationException::withMessages([
+                $requestAttribute => $errorMessages
+            ]);
+        }
+
+        $collectionValidator->validate();
 
         return function () use ($request, $data, $attribute, $model, $requestAttribute) {
 

@@ -207,9 +207,10 @@ class Media extends Field
 
     protected function handleMedia(NovaRequest $request, $model, $attribute, $data)
     {
-        $remainingIds = $this->removeDeletedMedia($data, $model->getMedia($attribute));
+        $media = $model->getMedia($attribute);
+        $remainingIds = $this->removeDeletedMedia($data, $media);
         $newIds = $this->addNewMedia($request, $data, $model, $attribute);
-        $existingIds = $this->addExistingMedia($request, $data, $model, $attribute, $model->getMedia($attribute));
+        $existingIds = $this->addExistingMedia($request, $data, $model, $attribute, $media);
         $this->setOrder($remainingIds->union($newIds)->union($existingIds)->sortKeys()->all());
     }
 
@@ -302,6 +303,11 @@ class Media extends Field
 
         if ($collectionName === 'ComputedField') {
             $collectionName = call_user_func($this->computedCallback, $resource);
+        }
+
+        // Eager load media relationship if not already loaded to prevent N+1 queries
+        if (!$resource->relationLoaded('media')) {
+            $resource->load('media');
         }
 
         $this->value = $resource->getMedia($collectionName)

@@ -1,6 +1,11 @@
+![alt text](https://marshmallow.dev/cdn/media/logo-red-237x46.png "marshmallow.")
+
 # Laravel Advanced Nova Media Library
 
-Manage images of [spatie's media library package](https://github.com/spatie/laravel-medialibrary). Upload multiple
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/marshmallow/advanced-nova-media-library.svg?style=flat-square)](https://packagist.org/packages/marshmallow/advanced-nova-media-library)
+[![Total Downloads](https://img.shields.io/packagist/dt/marshmallow/advanced-nova-media-library.svg?style=flat-square)](https://packagist.org/packages/marshmallow/advanced-nova-media-library)
+
+Laravel Nova tools for managing the [Spatie media library](https://github.com/spatie/laravel-medialibrary). Upload multiple
 images and order them by drag and drop.
 
 > [!important]
@@ -10,17 +15,22 @@ images and order them by drag and drop.
 
 -   [Examples](#examples)
 -   [Install](#install)
+-   [Configuration](#configuration)
 -   [Model media configuration](#model-media-configuration)
 -   [Generic file management](#generic-file-management)
 -   [Single image upload](#single-image-upload)
 -   [Multiple image upload](#multiple-image-upload)
 -   [Selecting existing media](#selecting-existing-media)
 -   [Names of uploaded images](#names-of-uploaded-images)
+-   [Responsive images](#responsive-images)
 -   [Image cropping](#image-cropping)
 -   [Custom properties](#custom-properties)
+-   [Show image statistics](#show-image-statistics-size-dimensions-type)
 -   [Custom headers](#custom-headers)
 -   [Media Field (Video)](#media-field-video)
--   [Change log](#change-log)
+-   [Temporary Urls](#temporary-urls)
+-   [Credits](#credits)
+-   [License](#license)
 
 ## Examples
 
@@ -32,13 +42,29 @@ images and order them by drag and drop.
 
 ## Install
 
+Install the package via Composer:
+
 ```bash
 composer require marshmallow/advanced-nova-media-library
 ```
 
+Publish the config file:
+
 ```bash
 php artisan vendor:publish --tag=nova-media-library
 ```
+
+This publishes the config to `config/nova-media-library.php`.
+
+## Configuration
+
+The published `config/nova-media-library.php` file exposes the following options:
+
+| Key | Default | Description |
+| --- | --- | --- |
+| `default-croppable` | `true` | Whether images are croppable by default. Set to `false` to disable cropping for all `Images` fields unless re-enabled per field. |
+| `enable-existing-media` | `false` | Enables the endpoint and UI for selecting already uploaded media. **Exposes a media search endpoint to every user — keep disabled if your media is confidential.** |
+| `hide-media-collections` | `[]` | Media collection names to exclude from the "existing media" search results. |
 
 ## Model media configuration
 
@@ -130,10 +156,10 @@ If your media upload / custom properties on the media models are confidential, *
 -   Publish the config files if you did not yet
 
 ```bash
-artisan vendor:publish --tag=nova-media-library
+php artisan vendor:publish --tag=nova-media-library
 ```
 
--   Enable this feature in config file _config/nova-media-library_
+-   Enable this feature in config file _config/nova-media-library.php_
 
 ```php
 return [
@@ -306,17 +332,26 @@ class YourModel extends Model implements HasMedia
 If you are using Amazon S3 to store your media, you will need to use the `temporary` function on your field to generate
 a temporary signed URL. This function expects a valid Carbon instance that will specify when the URL should expire.
 
-```
+```php
 Images::make('Image 1', 'img1')
     ->temporary(now()->addMinutes(5))
 
 Files::make('Multiple files', 'multiple_files')
-    ->temporary(now()->addMinutes(10),
+    ->temporary(now()->addMinutes(10)),
 ```
 
 **Note**: This feature does not work with the existing media feature.
 
-# Credits
+## Security Vulnerabilities
+
+Please report security vulnerabilities by email rather than via the public issue tracker.
+
+## Credits
 
 -   [nova media library](https://github.com/jameslkingsley/nova-media-library)
 -   [ebess/advanced-nova-media-library](https://github.com/ebess/advanced-nova-media-library)
+-   [All Contributors](https://github.com/marshmallow-packages/advanced-nova-media-library/contributors)
+
+## License
+
+The MIT License. This package is open-sourced software licensed under the MIT license.

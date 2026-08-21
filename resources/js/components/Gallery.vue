@@ -1,7 +1,8 @@
 <template>
   <div class="gallery" :class="{ editable }" @mouseover="mouseOver = true" @mouseout="mouseOver = false">
     <Cropper v-if="field.type === 'media' && editable" :image="cropImage" :must-crop="field.mustCrop"
-      @close="onCloseCroppedImage" @crop-completed="onCroppedImage" :configs="field.croppingConfigs" />
+      @close="onCloseCroppedImage" @crop-completed="onCroppedImage" @crop-cancelled="onCancelledCroppedImage"
+      :configs="field.croppingConfigs" />
 
     <template v-if="draggable"></template>
 
@@ -291,6 +292,18 @@ export default {
 
     onCloseCroppedImage() {
       this.cropImageQueue.pop();
+    },
+
+    /**
+     * When cropping is mandatory, cancelling means the image should not be
+     * added at all. Otherwise an uncropped image would silently stay behind.
+     */
+    onCancelledCroppedImage(image) {
+      let index = this.images.indexOf(image);
+
+      if (index !== -1) {
+        this.remove(index);
+      }
     },
 
     /**

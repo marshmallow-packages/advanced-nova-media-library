@@ -7,61 +7,43 @@
         <Cropper
           v-if="image"
           ref="clipper"
+          class="anml-cropper-viewport"
           :stencil-props="configs || {}"
           :src="imageUrl"
+          @ready="onImageReady"
+          @error="onImageError"
         />
       </div>
       <div class="bg-30 px-6 py-3 footer rounded-lg">
-        <OutlineButton v-if="!cropAnyway" type="button" @click="onCancel">{{
-          __("Cancel")
-        }}</OutlineButton>
-
-        <button
-          v-if="!cropAnyway"
+        <Button
           type="button"
-          class="btn btn-link text-80 font-normal h-9 px-3"
-          @click.prevent="rotate(-90)"
+          variant="link"
+          :label="__('Cancel')"
+          @click.prevent="onCancel"
+        />
+
+        <Button
+          type="button"
+          variant="action"
+          icon="arrow-uturn-left"
           :title="__('Rotate -90')"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            class="fill-current"
-          >
-            <path
-              d="M17.026 22.957c10.957-11.421-2.326-20.865-10.384-13.309l2.464 2.352h-9.106v-8.947l2.232 2.229c14.794-13.203 31.51 7.051 14.794 17.675z"
-            />
-          </svg>
-        </button>
-        <button
-          v-if="!cropAnyway"
+          @click.prevent="rotate(-90)"
+        />
+        <Button
           type="button"
-          class="btn btn-link text-80 font-normal h-9 px-3"
-          @click.prevent="rotate(+90)"
+          variant="action"
+          icon="arrow-uturn-right"
           :title="__('Rotate +90')"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            class="fill-current"
-          >
-            <path
-              d="M6.974 22.957c-10.957-11.421 2.326-20.865 10.384-13.309l-2.464 2.352h9.106v-8.947l-2.232 2.229c-14.794-13.203-31.51 7.051-14.794 17.675z"
-            />
-          </svg>
-        </button>
+          @click.prevent="rotate(+90)"
+        />
 
-        <DefaultButton
-          type="button"
-          class="btn btn-default btn-primary"
-          @click="onSave"
+        <Button
           ref="updateButton"
-          >{{ __("Update") }}</DefaultButton
-        >
+          type="button"
+          variant="solid"
+          :label="__('Update')"
+          @click.prevent="onSave"
+        />
       </div>
     </card>
   </Modal>
@@ -71,10 +53,12 @@
 import Converter from "../converter";
 import { Cropper } from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
+import { Button } from "laravel-nova-ui";
 
 export default {
   components: {
     Cropper,
+    Button,
   },
   props: {
     image: Object,
@@ -107,13 +91,26 @@ export default {
     image: function (newValue) {
       if (newValue) {
         this.$nextTick(() => {
-          this.$refs.updateButton.focus();
+          this.focusUpdateButton();
         });
       }
       this.reset();
     },
   },
   methods: {
+    focusUpdateButton() {
+      const button = this.$refs.updateButton;
+
+      if (!button) {
+        return;
+      }
+
+      const element = button.$el || button;
+
+      if (typeof element.focus === "function") {
+        element.focus();
+      }
+    },
     reset() {
       if (this.$refs.clipper && this.image) {
         this.$refs.clipper.rotate(-this.rotationHistory);
@@ -121,33 +118,64 @@ export default {
       this.rotationHistory = 0;
     },
     rotate(angle) {
+      if (!this.$refs.clipper) {
+        return;
+      }
+
       this.$refs.clipper.rotate(angle);
       this.rotationHistory += angle;
     },
+    onImageReady() {
+      // Safari can lay the modal out before the image has dimensions, which
+      // leaves the cropper collapsed to zero height. Recalculating once the
+      // image is loaded fixes that.
+      this.$nextTick(() => {
+        if (this.$refs.clipper) {
+          this.$refs.clipper.refresh();
+        }
+      });
+    },
+    onImageError() {
+      Nova.error(
+        this.__("The image could not be loaded for cropping. Please try again."),
+      );
+    },
     onSave() {
-      const { canvas } = this.$refs.clipper.getResult();
-      const base64 = canvas.toDataURL(this.mime);
-      const file = Converter(base64, this.mime, this.image.file_name);
+      let fileData = null;
 
-      let fileData = {
-        file,
-        __media_urls__: {
-          __original__: base64,
-          default: base64,
-        },
-        name: file.name,
-        file_name: file.name,
-      };
+      try {
+        const { canvas } = this.$refs.clipper.getResult();
+        const base64 = canvas.toDataURL(this.mime);
+        const file = Converter(base64, this.mime, this.image.file_name);
+
+        fileData = {
+          file,
+          __media_urls__: {
+            __original__: base64,
+            default: base64,
+          },
+          name: file.name,
+          file_name: file.name,
+        };
+      } catch (error) {
+        // Without this the modal silently stays open and the button looks dead.
+        Nova.error(this.__("The image could not be cropped. Please try again."));
+        console.error(error);
+
+        return;
+      }
 
       this.$emit("crop-completed", fileData);
       this.$emit("close");
     },
     onCancel() {
+      // Under mustCrop the image was only added so it could be cropped, so
+      // cancelling discards it instead of leaving an uncropped image behind.
       if (this.cropAnyway) {
-        this.onSave();
-      } else {
-        this.$emit("close");
+        this.$emit("crop-cancelled", this.image);
       }
+
+      this.$emit("close");
     },
   },
 };
@@ -161,6 +189,15 @@ export default {
 
 .modal-cropper {
   z-index: 400;
+}
+
+/* Safari has been seen collapsing the cropper to zero height, which hides the
+   image and pushes the footer to the top of an apparently empty modal.
+   The class is namespaced on purpose: `cropper-canvas` belongs to Cropper.js,
+   whose global stylesheet sets `position: absolute` on it. Scoped styles do
+   not protect against an unscoped global rule matching the same class. */
+.anml-cropper-viewport {
+  min-height: 20rem;
 }
 
 .max-w-view {

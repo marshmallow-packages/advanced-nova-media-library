@@ -15,14 +15,20 @@
         "
       />
       <div class="absolute top-0 left-0 mt-3 ml-3 hidden group-hover:block">
-        <OutlineButton type="button" @click.prevent="$emit('copy')">{{
-          __("Copy")
-        }}</OutlineButton>
+        <Button
+          type="button"
+          variant="link"
+          :label="__('Copy')"
+          @click.prevent="$emit('copy')"
+        />
       </div>
       <div class="absolute top-0 right-0 mt-3 mr-3 hidden group-hover:block">
-        <DefaultButton @click.prevent="$emit('select')" type="button">{{
-          __("Select")
-        }}</DefaultButton>
+        <Button
+          type="button"
+          variant="solid"
+          :label="__('Select')"
+          @click.prevent="$emit('select')"
+        />
       </div>
     </div>
     <div class="p-3 px-2 py-2">
@@ -43,7 +49,12 @@
 </template>
 
 <script>
+import { Button } from "laravel-nova-ui";
+
 export default {
+  components: {
+    Button,
+  },
   props: {
     item: {
       default: function () {

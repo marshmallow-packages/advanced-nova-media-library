@@ -41,9 +41,12 @@
 
           <!-- Close -->
           <div class="px-4 ml-auto self-center">
-            <OutlineButton type="button" @click="close">{{
-              __("Close")
-            }}</OutlineButton>
+            <Button
+              type="button"
+              variant="link"
+              :label="__('Close')"
+              @click.prevent="close"
+            />
           </div>
         </div>
 
@@ -83,9 +86,13 @@
           class="flex-shrink border-t border-gray-300 dark:border-gray-700 pt-3 mt-4 text-right"
           v-if="showNextPage"
         >
-          <DefaultButton type="button" class="ml-auto" @click="nextPage">{{
-            __("Load Next Page")
-          }}</DefaultButton>
+          <Button
+            type="button"
+            class="ml-auto"
+            variant="solid"
+            :label="__('Load Next Page')"
+            @click.prevent="nextPage"
+          />
         </div>
       </div>
     </Card>
@@ -95,10 +102,11 @@
 <script>
 import ExistingMediaItem from "./ExistingMediaItem";
 import debounce from "lodash/debounce";
-import { Icon } from "laravel-nova-ui";
+import { Button, Icon } from "laravel-nova-ui";
 
 export default {
   components: {
+    Button,
     ExistingMediaItem,
     Icon,
   },

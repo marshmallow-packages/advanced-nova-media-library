@@ -28,9 +28,17 @@ trait HandlesExistingMediaTrait
                 // New files will come in as UploadedFile objects,
                 // whereas Vapor-uploaded files will come in as arrays.
                 return (! ($value instanceof UploadedFile)) && (! (is_array($value))) && ! (in_array($value, $addedMediaIds));
-            })->map(function ($model_id, int $index) use ($request, $model, $collection) {
+            })->map(function ($mediaId, int $index) use ($request, $model, $collection) {
                 $mediaClass = config('media-library.media_model');
-                $existingMedia = $mediaClass::find($model_id);
+                $existingMedia = $mediaClass::find($mediaId);
+
+                // A submitted id can point at media that no longer exists: the row was
+                // deleted after the form was rendered, or the field submitted an empty
+                // value that ConvertEmptyStringsToNull turned into null. Copying it
+                // fatals on ->file_name and takes the entire resource save down with it.
+                if (! $existingMedia) {
+                    return null;
+                }
 
                 // Mimic copy behaviour
                 // See Spatie\MediaLibrary\Models\Media->copy()
@@ -56,6 +64,9 @@ trait HandlesExistingMediaTrait
                 $temporaryDirectory->delete();
 
                 return $media->getKey();
+            })
+            ->filter(function ($mediaId) {
+                return $mediaId !== null;
             });
     }
 }

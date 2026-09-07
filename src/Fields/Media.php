@@ -251,6 +251,9 @@ class Media extends Field
     protected function handleMedia(NovaRequest $request, $model, $attribute, $data)
     {
         $media = $model->getMedia($attribute);
+
+        $this->guardAgainstUnresolvableExistingMedia($data, $media, $attribute);
+
         $remainingIds = $this->removeDeletedMedia($data, $media);
         $newIds = $this->addNewMedia($request, $data, $model, $attribute);
         $existingIds = $this->addExistingMedia($request, $data, $model, $attribute, $media);
